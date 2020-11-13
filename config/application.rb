@@ -12,5 +12,17 @@ module AjaxSample
     # Application configuration should go into files in config/initializers
     # -- all .rb files in that directory are automatically loaded.
     # Initialize configuration defaults for originally generated Rails version.
+	
+   #config.middleware.insert_before 0, "Rack::Cors" do
+   #  allow do
+   #     origins 'http://localhost:3000'
+   #     resource(
+   #       '*',
+   #       headers: :any,
+   #       methods: [:get, :patch, :put, :delete, :post, :options]
+   #       )
+   #   end
+   # end
+	
   end
 end

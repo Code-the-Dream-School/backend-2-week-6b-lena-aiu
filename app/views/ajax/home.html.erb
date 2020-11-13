@@ -1,9 +1,32 @@
 <h1>Ajax#home</h1>
 <p>Find me in app/views/ajax/home.html.erb</p>
-<button id="list-todos" type="button">List todos</button><br>
-<label>title</label><input id="todo-title"><label>created by</label>
-<input id="todo-created-by"><button id="create-todo" type="button">Create todo</button><br>
+<button id="list-todos" type="button">List todos</button>
+<br/><br/>
+<label>title</label>
+<input id="todo-title">
+
+<label>created by</label>
+<input id="todo-created-by">
+<button id="create-todo" type="button">Create todo</button>
+<br/><br/>
+
+<label>todo id</label>
+<input id="todo-id">
+<button id="list-items" type="button">List items</button>
+<br/><br/>
+
+<label>todo id</label>
+<input id="todo-id2">
+<label>name</label>
+<input id="item-name">
+
+<label>Done</label>
+<input type="checkbox" id="done-box">
+<button id="create-item" type="button">Create item</button>
+<br><br/>
 <div id="results-div"></div>
+
+
 <script>
 document.addEventListener('DOMContentLoaded', (event) => {
   console.log('DOM fully loaded and parsed');
@@ -27,7 +50,7 @@ document.addEventListener('DOMContentLoaded', (event) => {
         }
       }
     };
-    eventRequest.open('GET', 'http://localhost:3001/todos');  // this is the URL and method for listing todos
+    eventRequest.open('GET', 'http://localhost:3001/');  // this is the URL and method for listing todos
     eventRequest.send();  // here we send the request.  Note that it is asynchronous, so you need an event handler
   });
   const createTodoButton = document.getElementById('create-todo');
@@ -44,11 +67,57 @@ document.addEventListener('DOMContentLoaded', (event) => {
         }
       }
     };
-    eventRequest.open('POST', 'http://localhost:3001/todos');  // method and URL to create a todo
+    eventRequest.open('POST', 'http://localhost:3001/');  // method and URL to create a todo
     eventRequest.setRequestHeader("Content-Type", "application/json");  // always do this on POST or PUT
     let dataToSend = `{"title": "${todoTitle.value}", "created_by": "${todoCreatedBy.value}"}` // JSON for the create
     console.log("sending data:",dataToSend)
     eventRequest.send(dataToSend);
+  });
+  const listItemsButton = document.getElementById('list-items');
+  const todoIdField = document.getElementById('todo-id');
+  listItemsButton.addEventListener('click', (event) => { // event handler for the list todos button
+    var eventRequest = new XMLHttpRequest(); // we create this to set up for the Ajax call
+    eventRequest.onreadystatechange = function () { // event handler for the ajax call
+      if(eventRequest.readyState === XMLHttpRequest.DONE) { // only handle DONE
+        if  (eventRequest.status === 200) { // we expect a 200 from a GET
+          resultsDiv.innerHTML=''; // Clear out this resultsDiv
+          var jsonArr = JSON.parse(eventRequest.responseText); // we get an array of objects in JSON format
+          for (let i=0; i<jsonArr.length; i+=1) {
+            let parag = document.createElement('P');
+            parag.textContent = JSON.stringify(jsonArr[i]); // each is a todo object, which we convert to a string for display
+            resultsDiv.appendChild(parag); // and add it to the div
+          }
+        } else {
+          alert(`Return code ${eventRequest.status} ${eventRequest.statusText}`); // this is how we report errors
+        }
+      }
+    };
+    var todoId = todoIdField.value;
+    eventRequest.open('GET', `http://localhost:3001/${todoId}/items`);  // this is the URL and method for listing todos
+    eventRequest.send();  // here we send the request.  Note that it is asynchronous, so you need an event handler
+  });
+  const addItemButton = document.getElementById('create-item');
+  const todoIdField2 = document.getElementById('todo-id2');
+  const doneBox= document.getElementById('done-box');
+  const itemNameField = document.getElementById('item-name')
+  addItemButton.addEventListener('click', (event) => { // event handler for the list todos button
+    var eventRequest = new XMLHttpRequest(); // we create this to set up for the Ajax call
+    eventRequest.onreadystatechange = function () { // event handler for the ajax call
+      if(eventRequest.readyState === XMLHttpRequest.DONE) { // only handle DONE
+        if  (eventRequest.status === 201) { // we expect a 201 from a POST
+          resultsDiv.innerHTML=eventRequest.responseText; // Clear out this resultsDiv
+        } else {
+          alert(`Return code ${eventRequest.status} ${eventRequest.statusText}`); // this is how we report errors
+        }
+      }
+    };
+    var todoId2 = todoIdField2.value;
+    var itemName = itemNameField.value;
+    var doneValue = doneBox.checked;
+    var dataToSend2 = {name: itemName, done: doneValue};
+    eventRequest.open('POST', `http://localhost:3001/${todoId2}/items`);
+    eventRequest.setRequestHeader("Content-Type", "application/json");
+    eventRequest.send(JSON.stringify(dataToSend2));  // here we send the request.  Note that it is asynchronous, so you need an event handler
   });
 });
 </script>

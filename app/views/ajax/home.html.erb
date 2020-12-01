@@ -50,7 +50,7 @@ document.addEventListener('DOMContentLoaded', (event) => {
         }
       }
     };
-    eventRequest.open('GET', 'http://localhost:3001/');  // this is the URL and method for listing todos
+    eventRequest.open('GET', 'http://localhost:3001/todos');  // this is the URL and method for listing todos
     eventRequest.send();  // here we send the request.  Note that it is asynchronous, so you need an event handler
   });
   const createTodoButton = document.getElementById('create-todo');
@@ -67,7 +67,7 @@ document.addEventListener('DOMContentLoaded', (event) => {
         }
       }
     };
-    eventRequest.open('POST', 'http://localhost:3001/');  // method and URL to create a todo
+    eventRequest.open('POST', 'http://localhost:3001/todos');  // method and URL to create a todo
     eventRequest.setRequestHeader("Content-Type", "application/json");  // always do this on POST or PUT
     let dataToSend = `{"title": "${todoTitle.value}", "created_by": "${todoCreatedBy.value}"}` // JSON for the create
     console.log("sending data:",dataToSend)
@@ -93,7 +93,7 @@ document.addEventListener('DOMContentLoaded', (event) => {
       }
     };
     var todoId = todoIdField.value;
-    eventRequest.open('GET', `http://localhost:3001/${todoId}/items`);  // this is the URL and method for listing todos
+    eventRequest.open('GET', `http://localhost:3001/todos/${todoId}/items`);  // this is the URL and method for listing todos
     eventRequest.send();  // here we send the request.  Note that it is asynchronous, so you need an event handler
   });
   const addItemButton = document.getElementById('create-item');
@@ -115,7 +115,7 @@ document.addEventListener('DOMContentLoaded', (event) => {
     var itemName = itemNameField.value;
     var doneValue = doneBox.checked;
     var dataToSend2 = {name: itemName, done: doneValue};
-    eventRequest.open('POST', `http://localhost:3001/${todoId2}/items`);
+    eventRequest.open('POST', `http://localhost:3001/todos/${todoId2}/items`);
     eventRequest.setRequestHeader("Content-Type", "application/json");
     eventRequest.send(JSON.stringify(dataToSend2));  // here we send the request.  Note that it is asynchronous, so you need an event handler
   });
